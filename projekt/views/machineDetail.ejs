@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Strona maszyny</title>
+  <link rel="stylesheet" href="/styles/machineDetail.css">
+</head>
+
+<body>
+
+  <%- include('partials/navbar') %>
+  <div class="container">
+    <div class="machine-details">
+      <h2><%= machine.name %></h2>
+      <p><span class="bold">Opis:</span></p>
+      <div class="machine-description-container">
+        <p><%= machine.description %></p>
+      </div>
+
+      <% if (user) { %>
+      <div class="date-picker">
+        
+        <form action="/machines/<%= machine.id %>/reservations" method="POST">
+          <label for="startDate">Data rozpoczęcia:</label>
+          <input type="date" id="startDate" name="startDate" required>
+        
+          <label for="endDate">Data zakończenia:</label>
+          <input type="date" id="endDate" name="endDate" required>
+        
+          <button class="add-reservation-btn" type="submit">Dodaj Rezerwację</button>
+        </form>
+      </div>
+      <% } %>
+
+      <% if (user && user.role === 'admin') { %>
+      <div>
+        <button class="edit-btn" onclick="openEditModal('<%= machine.id %>')">Edytuj Maszynę</button>
+        <form action="/machines/<%= machine.id %>/delete" method="POST" style="display:inline;">
+          <button type="submit" class="delete-btn" onclick="return confirm('Czy na pewno chcesz usunąć tę maszynę?');">Usuń Maszynę</button>
+        </form>
+      </div>
+      <% } %>
+
+    </div>
+
+    <div>
+      <img class="machine-image" src="<%= machine.image %>" alt="<%= machine.name %>">
+    </div>
+  </div>
+
+  <div class="container">
+    <h3>Rezerwacje tej maszyny</h3>
+    <br>
+    <table class="reservation-table">
+      <thead>
+        <tr>
+          <th>Rezerwacja od</th>
+          <th>Rezerwacja do</th>
+          <th>Akcja</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% reservations.forEach(reservation => { %>
+          <tr>
+            <td><%= reservation.start_date %></td>
+            <td><%= reservation.end_date %></td>
+            <% if (user) { %>
+              <% if (user.role === 'admin' || user.id === reservation.user_id) { %>
+            <td>
+              <form action="/machines/<%= machine.id %>/reservations/<%= reservation.id %>/delete" method="POST">
+                <button type="submit">Anuluj rezerwację</button>
+              </form>
+            </td>
+              <% } %>
+            <% } %>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+
+<div id="editModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeEditModal()">&times;</span>
+      <h2>Edytuj Maszynę</h2>
+      <form id="editForm" action="/machines/<%= machine.id %>/edit" method="POST">
+        <input type="hidden" id="editMachineId" name="id" value="<%= machine.id %>">
+  
+        <label for="editMachineName">Nazwa</label>
+        <input type="text" id="editMachineName" name="name" value="<%= machine.name %>" required>
+  
+        <br>
+  
+        <label for="editMachineDescription">Opis</label>
+        <textarea id="editMachineDescription" name="description" required><%= machine.description %></textarea>
+  
+        <br>
+  
+        <label for="editMachineImage">Link do zdjęcia</label>
+        <input type="url" id="editMachineImage" name="image" value="<%= machine.image %>" required>
+  
+        <br>
+  
+        <button type="submit">Zapisz zmiany</button>
+      </form>
+    </div>
+  </div>
+  
+  <script>
+    function openEditModal(machineId) {
+      document.getElementById('editMachineId').value = machineId;
+      document.getElementById('editModal').style.display = 'block';
+    }
+
+    function closeEditModal() {
+      document.getElementById('editModal').style.display = 'none';
+    }
+
+    window.onclick = function (event) {
+      if (event.target == document.getElementById('editModal')) {
+        closeEditModal();
+      }
+    }
+  </script>
+
+</body>
+
+</html>

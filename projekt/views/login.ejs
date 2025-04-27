@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Logowanie</title>
+  <link rel="stylesheet" href="styles/login.css">
+</head>
+
+<body>
+  <%- include('partials/navbar') %>
+
+  <h1>Logowanie</h1>
+
+  <form action="/login" method="POST">
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" required placeholder="Podaj adres email">
+    </div>
+
+    <div class="form-group">
+      <label for="password">Hasło</label>
+      <input type="password" id="password" name="password" required placeholder="Podaj hasło">
+    </div>
+
+    <div class="form-group">
+      <button type="submit" class="button">Zaloguj się</button>
+    </div>
+  </form>
+
+  <script>
+    function closeModal() {
+      document.getElementById('errorModal').style.display = 'none';
+    }
+
+    window.onclick = function (event) {
+      if (event.target == document.getElementById('errorModal')) {
+        closeModal();
+      }
+    }
+  </script>
+
+</body>
+
+</html>

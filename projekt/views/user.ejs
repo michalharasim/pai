@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zarządzaj uzytkownikami</title>
+  <link rel="stylesheet" href="/styles/user.css">
+</head>
+
+<body>
+  <%- include('partials/navbar') %>
+
+  <h1 style="text-align: center;">Zarządzanie użytkownikami</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Nazwa</th>
+        <th>Email</th>
+        <th>Numer telefonu</th>
+        <th>Rola</th>
+        <th>Akcja</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% users.forEach(user => { %>
+        <tr>
+          <td>
+            <%= user.username %>
+          </td>
+          <td>
+            <%= user.email %>
+          </td>
+          <td>
+            <%= user.phone %>
+          </td>
+          <td>
+            <%= user.role %>
+          </td>
+          <td>
+            <button class="edit-btn" onclick="openEditModal('<%= user.id %>', '<%= user.username %>', '<%= user.email %>', '<%= user.phone %>', '<%= user.role %>')">Edytuj</button>
+            <form action="/users/<%= user.id %>/delete" method="POST" style="display:inline;">
+              <button type="submit" class="delete-btn" onclick="return confirm('Czy chcesz usunąć tego użytkownika?');">Usuń</button>
+            </form>
+          </td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeEditModal()">&times;</span>
+      <h2>Edytuj użytkownika</h2>
+      <form id="editForm" action="" method="POST">
+        <input type="hidden" id="editUserId" name="id">
+        <label for="editUsername">Nazwa</label>
+        <input type="text" id="editUsername" name="username" required>
+        <br>
+        <label for="editEmail">Email</label>
+        <input type="email" id="editEmail" name="email" required>
+        <br>
+        <label for="editPhone">Numer telefonu</label>
+        <input type="text" id="editPhone" name="phone">
+        <br>
+        <label for="editPassword">Nowe hasło</label>
+        <input type="password" id="editPassword" name="password">
+        <br>
+        <label for="editRole">Rola</label>
+        <div>
+          <select id="editRole" name="role" required>
+            <option value="user">user</option>
+            <option value="admin">admin</option>
+          </select>
+        </div>
+        <br>
+        <button type="submit" class="button">Zapisz zmiany</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function openEditModal(userId, username, email, phone, role) {
+      document.getElementById('editUserId').value = userId;
+      document.getElementById('editUsername').value = username;
+      document.getElementById('editEmail').value = email;
+      document.getElementById('editPhone').value = phone;
+      document.getElementById('editRole').value = role;
+      document.getElementById('editForm').action = '/users/' + userId + '/edit';
+      document.getElementById('editModal').style.display = 'block';
+    }
+
+    function closeEditModal() {
+      document.getElementById('editModal').style.display = 'none';
+    }
+
+    window.onclick = function (event) {
+      if (event.target == document.getElementById('editModal')) {
+        closeEditModal();
+      }
+    }
+  </script>
+
+</body>
+
+</html>

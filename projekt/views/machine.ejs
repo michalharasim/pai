@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maszyny</title>
+  <link rel="stylesheet" href="/styles/machine.css">
+</head>
+
+<body>
+
+  <%- include('partials/navbar') %>
+
+  <div class="container">
+    <h1>Maszyny dostępne w naszej spółdzielni</h1>
+
+    <% if (user && user.role === 'admin') { %>
+    <a href="javascript:void(0);" class="add-machine-btn" onclick="openAddMachineForm()">Dodaj maszynę</a>
+    <% } %>
+
+    <div class="machine-grid">
+      <% machines.forEach(machine => { %>
+        <div class="machine-card" onclick="window.location.href='/machines/<%= machine.id %>'">
+          <img src="<%= machine.image %>" alt="<%= machine.name %>">
+          <h3><%= machine.name %></h3>
+        </div>
+      <% }); %>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalOverlay"></div>
+  <div class="form-container" id="addMachineForm">
+    <span class="close-btn" onclick="closeAddMachineForm()">&times;</span>
+
+    <h3>Dodaj maszynę</h3>
+    <form action="/machines" method="POST">
+      <label for="machineName">Nazwa</label>
+      <input type="text" id="machineName" name="name" required placeholder="Wpisz nazwę maszyny">
+
+      <label for="machineDescription">Opis</label>
+      <textarea id="machineDescription" name="description" required placeholder="Wpisz opis maszyny"></textarea>
+
+      <label for="machineImage">Link do zdjęcia</label>
+      <input type="url" id="machineImage" name="image" required placeholder="Wpisz link do zdjęcia">
+
+      <button type="submit">Zapisz maszynę</button>
+    </form>
+  </div>
+
+  <script>
+    function openAddMachineForm() {
+      document.getElementById('addMachineForm').style.display = 'block';
+      document.getElementById('modalOverlay').style.display = 'block';
+    }
+
+    function closeAddMachineForm() {
+      document.getElementById('addMachineForm').style.display = 'none';
+      document.getElementById('modalOverlay').style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+      if (event.target == document.getElementById('modalOverlay')) {
+        closeAddMachineForm();
+      }
+    };
+  </script>
+
+</body>
+
+</html>
